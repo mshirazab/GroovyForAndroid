@@ -30,6 +30,7 @@ import java.util.ArrayList;
  */
 class Track
 {
+
     public String Name;
     public ArrayList<String> Artists;
     public int TrackNumber ;
