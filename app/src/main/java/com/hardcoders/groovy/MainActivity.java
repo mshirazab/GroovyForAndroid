@@ -15,11 +15,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.squareup.picasso.Picasso;
 
 import org.cmc.music.metadata.MusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
 import org.cmc.music.myid3.MyID3;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.CannotWriteException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +51,24 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String searchedText = searchEdit.getText().toString();
                 //TODO : do somthing with searcheed word
+                try {
+                    RootObject responseList = Groovy.Search(searchedText);
+                    searchEdit.setText(responseList.Tracks.Items.get(0).Album.Name);
+                } catch (UnirestException e) {
+                    e.printStackTrace();
+                } catch (TagException e) {
+                    e.printStackTrace();
+                } catch (CannotWriteException e) {
+                    e.printStackTrace();
+                } catch (ReadOnlyFileException e) {
+                    e.printStackTrace();
+                } catch (CannotReadException e) {
+                    e.printStackTrace();
+                } catch (InvalidAudioFrameException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
