@@ -38,11 +38,11 @@ public class LocalMusicActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_local_music);
         listView = (ListView) findViewById(R.id.local_listview);
-        try {
+        /*try {
             fileManager(home);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void fileManager(final String directory) {
