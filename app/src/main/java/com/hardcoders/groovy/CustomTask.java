@@ -26,10 +26,10 @@ import java.util.ArrayList;
 class CustomTask extends AsyncTask<String, Void, String> {
 
     private static final String TAG = "CustomTask";
-    String searchedName;
+    EditText editText;
 
-    public CustomTask(String searchedName) {
-        this.searchedName = searchedName;
+    public CustomTask(EditText editText) {
+        this.editText = editText;
     }
 
     @Override
@@ -48,7 +48,7 @@ class CustomTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        searchedName = s;
+        editText.setText(s);
     }
 }
 

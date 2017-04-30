@@ -63,9 +63,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String searchedText = searchEdit.getText().toString();
                 //TODO : do somthing with searched word
-                CustomTask customTask = new CustomTask(searchedText);
+                CustomTask customTask = new CustomTask(searchEdit);
                 customTask.execute(searchedText);
-                searchEdit.setText(customTask.searchedName);
             }
         });
     }
