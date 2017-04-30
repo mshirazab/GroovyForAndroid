@@ -35,7 +35,7 @@ class CustomTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
         try {
-            RootObject responseList = Groovy.Search(searchedName);
+            RootObject responseList = Groovy.Search(params[0]);
             return responseList.Tracks.Items.get(0).Album.Name;
         } catch (UnirestException | TagException |
                 CannotWriteException | ReadOnlyFileException |
