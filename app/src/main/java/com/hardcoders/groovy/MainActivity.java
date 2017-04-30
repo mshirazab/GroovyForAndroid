@@ -1,17 +1,12 @@
 package com.hardcoders.groovy;
 
-import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.Image;
 import android.net.Uri;
-import android.os.Debug;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.view.menu.ExpandedMenuView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -19,8 +14,6 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import org.cmc.music.metadata.IMusicMetadata;
-import org.cmc.music.metadata.ImageData;
 import org.cmc.music.metadata.MusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
 import org.cmc.music.myid3.MyID3;
@@ -71,9 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static byte[] readFile(File file) throws IOException {
         // Open file
-        RandomAccessFile f = new RandomAccessFile(file, "r");
 
-        try {
+        try (RandomAccessFile f = new RandomAccessFile(file, "r")) {
             // Get and check length
             long longlength = f.length();
             int length = (int) longlength;
@@ -83,8 +75,6 @@ public class MainActivity extends AppCompatActivity {
             byte[] data = new byte[length];
             f.readFully(data);
             return data;
-        } finally {
-            f.close();
         }
     }
 
@@ -108,15 +98,14 @@ public class MainActivity extends AppCompatActivity {
                     Picasso.with(this).load(uri).into((ImageView) findViewById(R.id.my_image));
 
 
-                    //
-                    File img;
+                    //TODO : set image source
+                    /*File img;
                     ImageData imageData = new ImageData(readFile(img), "", "", 3);
                     metadata.addPicture(imageData);
                     metadata.setArtist("Bob Marley");
 
-                    //save changes
-                    //File dst = new File(audioFile.getAbsolutePath() + " (Edited)");
-                    //new MyID3().write(audioFile, dst, src_set, metadata);
+                    File dst = new File(audioFile.getAbsolutePath() + " (Edited)");
+                    new MyID3().write(audioFile, dst, src_set, metadata);*/
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
