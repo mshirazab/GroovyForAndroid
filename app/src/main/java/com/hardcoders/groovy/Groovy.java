@@ -4,10 +4,8 @@ package com.hardcoders.groovy;
  * Created by nithin on 4/30/17.
  */
 
-
 import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.jaudiotagger.audio.AudioFile;
@@ -24,6 +22,7 @@ import org.json.JSONException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.Future;
 
 /**
  * Created by nithin on 4/15/17.
@@ -143,26 +142,17 @@ public class Groovy {
         String scope = "app.music.xboxlive.com";
         String grantType = "client_credentials";
 
-        HttpResponse<JsonNode> jsonResponse = Unirest.post(service)
+        HttpResponse<String> jsonResponse = Unirest.post(service)
                 .header("accept", "application/json")
                 .header("client_id", clientId)
                 .header("client_secret", clientSecret)
                 .header("scope", scope)
                 .header("grant_type",grantType)
-                .asJson();
+                .asString();
 
 
         String token = null;
-        try {
-            token = jsonResponse.getBody().getObject().get("access_token").toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        try {
-            System.out.println(jsonResponse.getBody().getObject().get("access_token"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        token = jsonResponse.getHeaders().get("access_token").toString();
         System.out.println(token);
 
 

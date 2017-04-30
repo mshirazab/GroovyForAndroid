@@ -1,8 +1,26 @@
 apply plugin: 'com.android.application'
 repositories {
     mavenCentral()
+    maven{
+        url 'https://raw.github.com/zeeshanejaz/unirest-android/mvn-repo'
+    }
 }
 android {
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+    }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -19,13 +37,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    useLibrary  'org.apache.http.legacy'
 }
-configurations {
-    compile.exclude group: "org.apache.httpcomponents", module: "httpclient"
-    compile.exclude group: "org.apache.httpcomponents", module: "httpasyncclient"
-    compile.exclude group: "org.apache.httpcomponents", module: "httpmime"
-    compile.exclude group: "org.json", module: "json"
-}
+
 
 
 dependencies {
@@ -33,17 +47,26 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
+    /*
+    compile('com.google.apis:google-api-services-drive:v3-rev70-1.22.0') {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient' //by both name and group
+        exclude group: 'org.apache.httpcomponents', module: 'httpasyncclient'
+        exclude group: 'org.apache.httpcomponents', module: 'httpmime'
+        exclude group: 'org.json', module: 'json'
+    }
+    */
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     compile files('libs/MyID3_for_Android.jar')
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
-    compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.1.3'
-    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.5.3'
-    compile group: 'org.json', name: 'json', version: '20160810'
-    compile group: 'com.mashape.unirest', name: 'unirest-java', version: '1.4.9'
+
+    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.4.1'
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.4'
+    compile group: 'org.apache.httpcomponents', name: 'httpasyncclient', version: '4.0.2'
+    compile group: 'org.apache.httpcomponents', name: 'httpmime', version: '4.3.6'
+    compile group: 'org.json', name: 'json', version: '20140107'
+    compile 'com.mashape.unirest:unirest-android:1.0+'
     compile group: 'org', name: 'jaudiotagger', version: '2.0.3'
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
 }
