@@ -128,6 +128,13 @@ class RootObject
     public String Culture ;
 }
 
+class AccessTokenObject
+{
+    public String token_type;
+    public String access_token;
+    public int expires_in;
+}
+
 public class Groovy {
 
     private static String EncodeQuery(String query)
@@ -147,15 +154,16 @@ public class Groovy {
 
         HttpResponse<String> jsonResponse = Unirest.post(service)
                 .header("accept", "application/json")
-                .header("client_id", clientId)
-                .header("client_secret", clientSecret)
-                .header("scope", scope)
-                .header("grant_type",grantType)
+                .field("client_id", clientId)
+                .field("client_secret", clientSecret)
+                .field("scope", scope)
+                .field("grant_type",grantType)
                 .asString();
 
-        String token = null;
-        token = jsonResponse.getHeaders().get("access_token").toString();
-        Log.d("Groovy Class",token);
+        Gson gson = new Gson();
+        AccessTokenObject accessTokenObject = gson.fromJson(jsonResponse.getBody(),AccessTokenObject.class);
+        String token = accessTokenObject.access_token;
+
 
 
         String url ="https://music.xboxlive.com/1/content/music/search?q=" + EncodeQuery(query) + "&filters=Tracks";
@@ -164,9 +172,8 @@ public class Groovy {
                 .header("Authorization", "Bearer " + token)
                 .asString().getBody();
 
-        System.out.println(myString);
 
-        Gson gson = new Gson();
+
         RootObject rootObject = gson.fromJson(myString, RootObject.class);
         return rootObject;
         /*
