@@ -3,6 +3,7 @@ package com.hardcoders.groovy;
 /**
  * Created by shiraz on 30/4/17.
  */
+
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +24,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 
-class CustomTask extends AsyncTask<String, Void, String> {
+class CustomTask extends AsyncTask<String, Void, RootObject> {
 
     private static final String TAG = "CustomTask";
     EditText editText;
@@ -33,10 +34,10 @@ class CustomTask extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected String doInBackground(String... params) {
+    protected RootObject doInBackground(String... params) {
         try {
             RootObject responseList = Groovy.Search(params[0]);
-            return responseList.Tracks.Items.get(0).Album.Name;
+            return responseList;
         } catch (UnirestException | TagException |
                 CannotWriteException | ReadOnlyFileException |
                 CannotReadException | IOException |
@@ -47,8 +48,8 @@ class CustomTask extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String s) {
-        editText.setText(s);
+    protected void onPostExecute(RootObject s) {
+        editText.setText(s.Tracks.Items.get(0).Album.Name);
     }
 }
 
