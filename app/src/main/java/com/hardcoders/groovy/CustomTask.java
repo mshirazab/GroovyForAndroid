@@ -1,0 +1,54 @@
+package com.hardcoders.groovy;
+
+/**
+ * Created by shiraz on 30/4/17.
+ */
+import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+
+import com.mashape.unirest.http.exceptions.UnirestException;
+
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.CannotWriteException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+
+class CustomTask extends AsyncTask<String, Void, String> {
+
+    private static final String TAG = "CustomTask";
+    String searchedName;
+
+    public CustomTask(String searchedName) {
+        this.searchedName = searchedName;
+    }
+
+    @Override
+    protected String doInBackground(String... params) {
+        try {
+            RootObject responseList = Groovy.Search(searchedName);
+            return responseList.Tracks.Items.get(0).Album.Name;
+        } catch (UnirestException | TagException |
+                CannotWriteException | ReadOnlyFileException |
+                CannotReadException | IOException |
+                InvalidAudioFrameException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        searchedName = s;
+    }
+}
+

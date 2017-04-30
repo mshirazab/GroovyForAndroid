@@ -19,6 +19,7 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.json.JSONException;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -149,7 +150,6 @@ public class Groovy {
                 .header("scope", scope)
                 .header("grant_type",grantType)
                 .asString();
-
 
         String token = null;
         token = jsonResponse.getHeaders().get("access_token").toString();

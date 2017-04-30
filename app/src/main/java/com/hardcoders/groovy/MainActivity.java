@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.Toolbar;
@@ -46,29 +47,25 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         searchEdit = (EditText) findViewById(R.id.main_edit);
         button = (Button) findViewById(R.id.main_button);
+        String searchedText = searchEdit.getText().toString();
+        //TODO : do somthing with searched word
+        try {
+            RootObject responseList = Groovy.Search(searchedText);
+            searchEdit.setText(responseList.Tracks.Items.get(0).Album.Name);
+        } catch (UnirestException | TagException |
+                CannotWriteException | ReadOnlyFileException |
+                CannotReadException | IOException |
+                InvalidAudioFrameException e) {
+            e.printStackTrace();
+        }
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String searchedText = searchEdit.getText().toString();
-                //TODO : do somthing with searcheed word
-                try {
-                    RootObject responseList = Groovy.Search(searchedText);
-                    searchEdit.setText(responseList.Tracks.Items.get(0).Album.Name);
-                } catch (UnirestException e) {
-                    e.printStackTrace();
-                } catch (TagException e) {
-                    e.printStackTrace();
-                } catch (CannotWriteException e) {
-                    e.printStackTrace();
-                } catch (ReadOnlyFileException e) {
-                    e.printStackTrace();
-                } catch (CannotReadException e) {
-                    e.printStackTrace();
-                } catch (InvalidAudioFrameException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                //TODO : do somthing with searched word
+                CustomTask customTask = new CustomTask(searchedText);
+                customTask.execute();
+                searchEdit.setText(searchedText);
             }
         });
     }
@@ -150,4 +147,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
 }
