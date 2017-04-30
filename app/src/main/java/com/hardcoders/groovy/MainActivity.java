@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
                     //show album art
                     Uri uri = ContentUris.withAppendedId(sArtworkUri, getAlbumID(audioFileUri));
-                    Picasso.with(this).load(uri).into((ImageView) findViewById(R.id.my_image));
+                    //Picasso.with(this).load(uri).into((ImageView) findViewById(R.id.my_image));
 
 
                     //TODO : set image source
