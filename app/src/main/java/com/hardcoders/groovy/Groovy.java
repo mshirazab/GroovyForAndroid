@@ -145,10 +145,10 @@ public class Groovy {
 
         HttpResponse<JsonNode> jsonResponse = Unirest.post(service)
                 .header("accept", "application/json")
-                .field("client_id", clientId)
-                .field("client_secret", clientSecret)
-                .field("scope", scope)
-                .field("grant_type",grantType)
+                .header("client_id", clientId)
+                .header("client_secret", clientSecret)
+                .header("scope", scope)
+                .header("grant_type",grantType)
                 .asJson();
 
 
