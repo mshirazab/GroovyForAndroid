@@ -59,15 +59,20 @@ public class MainActivity extends AppCompatActivity {
                 InvalidAudioFrameException e) {
             e.printStackTrace();
         }
+        /*
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String searchedText = searchEdit.getText().toString();
                 //TODO : do somthing with searched word
-                CustomTask customTask = new CustomTask(searchEdit);
-                customTask.execute(searchedText);
             }
-        });
+        });*/
+    }
+
+    public void startNewActivity(View view) {
+        Intent intent = new Intent(this, LocalMusicActivity.class);
+        intent.putExtra("SEARCHED_KEY", searchEdit.getText().toString());
+        startActivity(intent);
     }
 
     public void startPopup(View view) {

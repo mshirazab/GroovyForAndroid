@@ -28,9 +28,10 @@ class CustomTask extends AsyncTask<String, Void, ArrayList<Track>> {
 
     private static final String TAG = "CustomTask";
     EditText editText;
+    CustomAdapter adapter;
 
-    public CustomTask(EditText editText) {
-        this.editText = editText;
+    public CustomTask(CustomAdapter adapter) {
+        this.adapter = adapter;
     }
 
     @Override
@@ -49,7 +50,7 @@ class CustomTask extends AsyncTask<String, Void, ArrayList<Track>> {
 
     @Override
     protected void onPostExecute(ArrayList<Track> s) {
-        editText.setText(s.get(0).Album);
+        adapter.addAll(s);
     }
 }
 
