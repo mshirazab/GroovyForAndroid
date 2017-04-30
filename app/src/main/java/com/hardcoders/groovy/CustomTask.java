@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 
-class CustomTask extends AsyncTask<String, Void, RootObject> {
+class CustomTask extends AsyncTask<String, Void, ArrayList<Track>> {
 
     private static final String TAG = "CustomTask";
     EditText editText;
@@ -34,10 +34,10 @@ class CustomTask extends AsyncTask<String, Void, RootObject> {
     }
 
     @Override
-    protected RootObject doInBackground(String... params) {
+    protected ArrayList<Track> doInBackground(String... params) {
         try {
-            RootObject responseList = Groovy.Search(params[0]);
-            return responseList;
+            ArrayList<Track> tracks = Groovy.Search(params[0]);
+            return tracks;
         } catch (UnirestException | TagException |
                 CannotWriteException | ReadOnlyFileException |
                 CannotReadException | IOException |
@@ -48,8 +48,8 @@ class CustomTask extends AsyncTask<String, Void, RootObject> {
     }
 
     @Override
-    protected void onPostExecute(RootObject s) {
-        editText.setText(s.Tracks.Items.get(0).Album.Name);
+    protected void onPostExecute(ArrayList<Track> s) {
+        editText.setText(s.get(0).Album);
     }
 }
 

@@ -144,7 +144,7 @@ public class Groovy {
         return query;
     }
 
-    public static RootObject Search(String query) throws UnirestException, TagException, CannotWriteException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
+    public static ArrayList<Track> Search(String query) throws UnirestException, TagException, CannotWriteException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
 
         String service = "https://login.live.com/accesstoken.srf";
         String clientId = "fcb2b041-fe82-4c06-8a30-d28a9ddc805d";
@@ -175,7 +175,13 @@ public class Groovy {
 
 
         RootObject rootObject = gson.fromJson(myString, RootObject.class);
-        return rootObject;
+        ArrayList<Track> tracks =  new ArrayList<Track>();
+        for(Item item :rootObject.Tracks.Items)
+        {
+            Track track = new Track(item);
+            tracks.add(track);
+        }
+        return tracks;
         /*
         System.out.println(rootObject.Tracks.Items.get(0).Album.Name);
 

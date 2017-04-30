@@ -31,6 +31,7 @@ import org.jaudiotagger.tag.TagException;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         String searchedText = searchEdit.getText().toString();
         //TODO : do somthing with searched word
         try {
-            RootObject responseList = Groovy.Search(searchedText);
-            searchEdit.setText(responseList.Tracks.Items.get(0).Album.Name);
+            ArrayList<Track> tracks = Groovy.Search(searchedText);
+            searchEdit.setText(tracks.get(0).Album);
         } catch (UnirestException | TagException |
                 CannotWriteException | ReadOnlyFileException |
                 CannotReadException | IOException |
