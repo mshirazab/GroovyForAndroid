@@ -153,7 +153,7 @@ public class Groovy {
 
         String token = null;
         token = jsonResponse.getHeaders().get("access_token").toString();
-        System.out.println(token);
+       // System.out.println(token);
 
 
         String url ="https://music.xboxlive.com/1/content/music/search?q=" + EncodeQuery(query) + "&filters=Tracks";
