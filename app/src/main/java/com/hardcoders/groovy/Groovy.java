@@ -125,8 +125,17 @@ class RootObject
     public Tracks Tracks ;
     public String Culture ;
 }
+
 public class Groovy {
-    public static void main(String[] args) throws UnirestException, TagException, CannotWriteException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
+
+    private static String EncodeQuery(String query)
+    {
+        query = query.trim();
+        query = query.replace(' ', '+');
+        return query;
+    }
+
+    public static RootObject Search(String query) throws UnirestException, TagException, CannotWriteException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
 
         String service = "https://login.live.com/accesstoken.srf";
         String clientId = "fcb2b041-fe82-4c06-8a30-d28a9ddc805d";
@@ -157,7 +166,7 @@ public class Groovy {
         System.out.println(token);
 
 
-        String url ="https://music.xboxlive.com/1/content/music/search?q=daft+punk";
+        String url ="https://music.xboxlive.com/1/content/music/search?q=" + EncodeQuery(query) + "&filters=Tracks";
         String myString = Unirest.get(url)
                 .header("accept", "application/json")
                 .header("Authorization", "Bearer " + token)
@@ -167,6 +176,8 @@ public class Groovy {
 
         Gson gson = new Gson();
         RootObject rootObject = gson.fromJson(myString, RootObject.class);
+        return rootObject;
+        /*
         System.out.println(rootObject.Tracks.Items.get(0).Album.Name);
 
         File file = new File("/home/yeetesh/Music/1.mp3");
@@ -175,6 +186,7 @@ public class Groovy {
         tag.setField(FieldKey.ARTIST,rootObject.Tracks.Items.get(0).Artists.get(0).Artist.Name);
         tag.setField(FieldKey.ARTIST,rootObject.Tracks.Items.get(0).Artists.get(0).Artist.Name);
         f.commit();
+        */
     }
 }
 
