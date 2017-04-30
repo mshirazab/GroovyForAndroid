@@ -4,6 +4,8 @@ package com.hardcoders.groovy;
  * Created by nithin on 4/30/17.
  */
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -153,7 +155,7 @@ public class Groovy {
 
         String token = null;
         token = jsonResponse.getHeaders().get("access_token").toString();
-       // System.out.println(token);
+        Log.d("Groovy Class",token);
 
 
         String url ="https://music.xboxlive.com/1/content/music/search?q=" + EncodeQuery(query) + "&filters=Tracks";
