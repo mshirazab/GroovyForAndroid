@@ -34,7 +34,7 @@ class Track
 {
 
     public String Name;
-    public ArrayList<String> Artists;
+    public ArrayList<String> Artists = new ArrayList<String>();
     public int TrackNumber ;
     public String Album;
     public String AlbumArtist;
@@ -46,16 +46,16 @@ class Track
     public Track(Item item)
     {
         Name = item.Name;
-        for(ArtistC artist : item.Artists)
+        for(int i = 0; i < item.Artists.size(); i++)
         {
-            Artists.add(artist.Artist.Name);
+            Artists.add(item.Artists.get(i).Artist.Name);
         }
         TrackNumber = item.TrackNumber;
         Album = item.Album.Name;
         AlbumArtist = Artists.get(0);
-        for(String genre : item.Genres)
+        for(int i = 0; i < item.Genres.size(); i++)
         {
-            Genres.add(genre);
+            Genres.add(item.Genres.get(i));
         }
         ImageURL = item.ImageUrl;
         ImageURLShort = ImageURL + "&w=250&h=250";

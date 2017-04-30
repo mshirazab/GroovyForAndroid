@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,8 +39,8 @@ public class CustomAdapter extends ArrayAdapter<Track> {
 
             nameText.setText(mp.Name);
             //TODO Set Artist name and album
-            artistText.setText("mp.Artist");
-            albumText.setText("mp.Album");
+            artistText.setText(TextUtils.join(", ",mp.Artists));
+            albumText.setText(mp.Album);
             Picasso.with(getContext()).load(mp.ImageURLShort).into(imageView);
         }
         return view;

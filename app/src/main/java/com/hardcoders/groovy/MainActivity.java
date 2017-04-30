@@ -50,15 +50,6 @@ public class MainActivity extends AppCompatActivity {
         button = (Button) findViewById(R.id.main_button);
         String searchedText = searchEdit.getText().toString();
         //TODO : do somthing with searched word
-        try {
-            ArrayList<Track> tracks = Groovy.Search(searchedText);
-            searchEdit.setText(tracks.get(0).Album);
-        } catch (UnirestException | TagException |
-                CannotWriteException | ReadOnlyFileException |
-                CannotReadException | IOException |
-                InvalidAudioFrameException e) {
-            e.printStackTrace();
-        }
         /*
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +61,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startNewActivity(View view) {
+        try {
+            ArrayList<Track> tracks = Groovy.Search(searchEdit.getText().toString());
+            searchEdit.setText(tracks.get(0).Album);
+        } catch (UnirestException | TagException |
+                CannotWriteException | ReadOnlyFileException |
+                CannotReadException | IOException |
+                InvalidAudioFrameException e) {
+            e.printStackTrace();
+        }
         Intent intent = new Intent(this, LocalMusicActivity.class);
         intent.putExtra("SEARCHED_KEY", searchEdit.getText().toString());
         startActivity(intent);
