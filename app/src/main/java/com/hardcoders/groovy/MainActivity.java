@@ -7,9 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -26,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int MUSIC_ID = 14;
     final public static Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+    EditText searchEdit;
+    Button button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
+        searchEdit = (EditText) findViewById(R.id.main_edit);
+        button = (Button) findViewById(R.id.main_button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String searchedText = searchEdit.getText().toString();
+                //TODO : do somthing with searcheed word
+            }
+        });
     }
 
     public void startPopup(View view) {
