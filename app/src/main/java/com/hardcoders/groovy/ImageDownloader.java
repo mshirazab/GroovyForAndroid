@@ -1,12 +1,15 @@
 package com.hardcoders.groovy;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaActionSound;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -40,6 +43,7 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
 
     public ImageDownloader(Context context, Track track, File audioFile) {
         this.track = track;
+        this.context = context;
         this.audioFile = audioFile;
     }
 
@@ -47,7 +51,7 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
     protected byte[] doInBackground(String... ignored) {
         DefaultHttpClient client = new DefaultHttpClient();
         try {
-            HttpUriRequest request = new HttpGet(track.ImageURL);
+            HttpUriRequest request = new HttpGet(track.ImageURLShort);
             HttpResponse response = client.execute(request);
             HttpEntity entity = response.getEntity();
             int imageLength = (int) (entity.getContentLength());
@@ -78,10 +82,13 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
             metadata.setAlbum(track.Album);
             metadata.setArtist(TextUtils.join(", ", track.Artists));
             metadata.setSongTitle(track.Name);
+            metadata.setGenre(track.Genres.get(0));
             File dst = new File(audioFile.getAbsolutePath());
             new MyID3().update(audioFile, src_set, metadata);
-            MediaScannerConnection scanner = null;
             Log.d("Image Download", "Done");
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            intent.setData(Uri.fromFile(audioFile));
+            context.sendBroadcast(intent);
         } catch (ID3WriteException | IOException e) {
             e.printStackTrace();
         }
