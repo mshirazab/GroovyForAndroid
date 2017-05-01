@@ -6,8 +6,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -32,16 +35,16 @@ import static android.widget.Toast.LENGTH_SHORT;
  */
 
 public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
+    ListView listView;
     Track track;
     File audioFile;
     Context context;
-    Snackbar snackbar;
 
-    public ImageDownloader(Context context, Track track, File audioFile, Snackbar snackbar) {
+    public ImageDownloader(Context context, Track track, File audioFile, ListView listView) {
         this.track = track;
         this.context = context;
         this.audioFile = audioFile;
-        this.snackbar = snackbar;
+        this.listView = listView;
     }
 
     @Override
@@ -102,15 +105,16 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
             metadata.setYear(String.valueOf(track.Year));
             new MyID3().update(newAudioFile, src_set, metadata);
             Log.d("Image Download", "Done");
-            snackbar.setText("Song tags set");
-            wait(2000);
-            snackbar.dismiss();
+            Snackbar snackbar = Snackbar.make(listView, "Download done", Snackbar.LENGTH_LONG);
+            View view = snackbar.getView();
+            view.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+            snackbar.show();
 
             DeleteMP3FromMediaStore(context, audioFile.getAbsolutePath());
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             intent.setData(Uri.fromFile(newAudioFile));
             context.sendBroadcast(intent);
-        } catch (ID3WriteException | IOException | InterruptedException e) {
+        } catch (ID3WriteException | IOException e) {
             e.printStackTrace();
         }
     }

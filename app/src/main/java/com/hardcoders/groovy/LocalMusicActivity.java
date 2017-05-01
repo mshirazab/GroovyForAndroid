@@ -107,7 +107,7 @@ public class LocalMusicActivity extends AppCompatActivity {
         if (requestCode == MUSIC_ID && resultCode == RESULT_OK) {
             if ((data != null) && (data.getData() != null)) {
                 final Snackbar snackbar = Snackbar
-                        .make(listView, "Downloading albumart for song", Snackbar.LENGTH_INDEFINITE);
+                        .make(listView, "Downloading albumart for song", Snackbar.LENGTH_SHORT);
                 View view = snackbar.getView();
                 view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
                 snackbar.show();
@@ -123,7 +123,7 @@ public class LocalMusicActivity extends AppCompatActivity {
                     Log.d("Music Selected", artist + "\t" + album + "\t" + song_title + "\t");
                     // Here we download the songs albumart and set all the tags
                     ImageDownloader imageDownloader = new ImageDownloader(this, selectedTrack,
-                            audioFile, snackbar);
+                            audioFile, listView);
                     imageDownloader.execute();
                 } catch (Exception e) {
                     e.printStackTrace();
