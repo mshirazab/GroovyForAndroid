@@ -3,6 +3,7 @@ package com.hardcoders.groovy;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -13,6 +14,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import com.squareup.picasso.Picasso;
+
+import org.cmc.music.metadata.ImageData;
 import org.cmc.music.metadata.MusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
 import org.cmc.music.myid3.MyID3;
@@ -24,13 +28,14 @@ import static com.hardcoders.groovy.MainActivity.sArtworkUri;
 
 public class LocalMusicActivity extends AppCompatActivity {
     ListView listView;
-    ArrayList<Track> tracks;
     private static final int MUSIC_ID = 968;
     CustomTask customTask;
+    Track selectedTrack = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final ArrayList<Track> tracks;
         setContentView(R.layout.activity_local_music);
         String s = getIntent().getStringExtra("SEARCHED_KEY");
         listView = (ListView) findViewById(R.id.local_listview);
@@ -43,7 +48,8 @@ public class LocalMusicActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                selectedTrack = tracks.get(position);
+                startPopup(view);
             }
         });
     }
@@ -96,20 +102,9 @@ public class LocalMusicActivity extends AppCompatActivity {
                     String album = metadata.getAlbum();
                     String song_title = metadata.getSongTitle();
                     Log.d("Music Selected", artist + "\t" + album + "\t" + song_title + "\t");
-
-                    //show album art
-                    Uri uri = ContentUris.withAppendedId(sArtworkUri, getAlbumID(audioFileUri));
-                    //Picasso.with(this).load(uri).into((ImageView) findViewById(R.id.my_image));
-
-
-                    //TODO : set image source
-                    /*File img;
-                    ImageData imageData = new ImageData(readFile(img), "", "", 3);
-                    metadata.addPicture(imageData);
-                    metadata.setArtist("Bob Marley");
-
-                    File dst = new File(audioFile.getAbsolutePath() + " (Edited)");
-                    new MyID3().write(audioFile, dst, src_set, metadata);*/
+                    // Here we download the songs albumart and set all the tags
+                    ImageDownloader imageDownloader = new ImageDownloader(this, selectedTrack, audioFile);
+                    imageDownloader.execute();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
