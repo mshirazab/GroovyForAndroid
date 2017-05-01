@@ -5,16 +5,16 @@
 
     <ImageView
         android:id="@+id/item_art"
-        android:layout_width="@dimen/image_size_list"
-        android:layout_height="@dimen/image_size_list"
-        android:layout_marginLeft="@dimen/standard_margin"
-        android:layout_marginRight="@dimen/standard_margin"
+        android:layout_width="125dp"
+        android:layout_height="125dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:contentDescription="@string/album_art"
         android:src="@mipmap/ic_launcher" />
 
     <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -24,28 +24,31 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/standard_margin"
             android:text="@string/hello"
+            android:maxLines="1"
+            android:layout_weight="1"
             android:textSize="@dimen/text_large" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/item_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/hello" />
 
-            <TextView
-                android:id="@+id/item_album"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:maxLines="1"
-                android:text="@string/hello" />
+        <TextView
+            android:id="@+id/item_artist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="@string/hello" />
 
-            <TextView
-                android:id="@+id/item_artist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:maxLines="1"
-                android:text="@string/hello" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Source : Groove Music"/>
+
     </LinearLayout>
 
 </LinearLayout>
