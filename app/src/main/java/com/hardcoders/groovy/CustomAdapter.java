@@ -16,8 +16,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 
-public class CustomAdapter extends ArrayAdapter<Track> {
-    public CustomAdapter(@NonNull Context context, ArrayList<Track> names) {
+class CustomAdapter extends ArrayAdapter<Track> {
+    CustomAdapter(@NonNull Context context, ArrayList<Track> names) {
         super(context, R.layout.item, names);
     }
 
@@ -27,7 +27,7 @@ public class CustomAdapter extends ArrayAdapter<Track> {
         View view = convertView;
         if (view == null) {
             LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-            view = layoutInflater.inflate(R.layout.item, null);
+            view = layoutInflater.inflate(R.layout.item, parent);
         }
         Track mp = getItem(position);
         if (mp != null) {
@@ -38,7 +38,7 @@ public class CustomAdapter extends ArrayAdapter<Track> {
 
             nameText.setText(mp.Name);
             //TODO Set Artist name and album
-            artistText.setText(TextUtils.join(", ",mp.Artists));
+            artistText.setText(TextUtils.join(", ", mp.Artists));
             albumText.setText(mp.Album);
             Picasso.with(getContext()).load(mp.ImageURLShort).into(imageView);
         }

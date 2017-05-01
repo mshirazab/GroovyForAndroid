@@ -76,7 +76,6 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
     @Override
     protected void onPostExecute(byte[] bytes) {
         try {
-//            Toast.makeText(context, track.ImageURL, Toast.LENGTH_SHORT).show();
             String[] fileArray = audioFile.getName().split("\\.");
             String newFileName = GetFileName(TextUtils.join(", ", track.Artists), track.Name) + "."
                     + fileArray[fileArray.length - 1];
