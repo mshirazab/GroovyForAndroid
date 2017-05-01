@@ -43,7 +43,7 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
     protected byte[] doInBackground(String... ignored) {
         DefaultHttpClient client = new DefaultHttpClient();
         try {
-            HttpUriRequest request = new HttpGet(track.ImageURLShort);
+            HttpUriRequest request = new HttpGet(track.ImageURL);
             HttpResponse response = client.execute(request);
             HttpEntity entity = response.getEntity();
             int imageLength = (int) (entity.getContentLength());

@@ -4,6 +4,8 @@ package com.hardcoders.groovy;
  * Created by nithin on 4/30/17.
  */
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
@@ -46,7 +48,9 @@ class Track {
         }
         ImageURL = item.ImageUrl;
         ImageURLShort = ImageURL + "&w=150&h=150";
-        //ImageURL += "&w=1000&h=1000";
+         Log.d("LOL", ImageURL + "&w=1000&h=1000");
+         Log.d("LOL", ImageURL);
+         ImageURL += "&w=1000&h=1000";
         Year = Integer.decode(item.ReleaseDate.substring(0, 4));
     }
 }
