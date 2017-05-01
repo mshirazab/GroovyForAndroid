@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
                 if (charSequence.toString().trim().length() > 0) {
                     button.setEnabled(true);
                 } else {
-                    Toast.makeText(MainActivity.this, "Please input a name", Toast.LENGTH_SHORT).show();
                     button.setEnabled(false);
                 }
             }
@@ -74,18 +73,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startNewActivity(View view) {
-        try {
-            ArrayList<Track> tracks = Groovy.Search(searchEdit.getText().toString());
-            searchEdit.setText(tracks.get(0).Album);
-        } catch (UnirestException | TagException |
-                CannotWriteException | ReadOnlyFileException |
-                CannotReadException | IOException |
-                InvalidAudioFrameException e) {
-            e.printStackTrace();
-        }
-        Intent intent = new Intent(this, LocalMusicActivity.class);
-        intent.putExtra("SEARCHED_KEY", searchEdit.getText().toString());
-        startActivity(intent);
+        if (button.isEnabled()) {
+            try {
+                ArrayList<Track> tracks = Groovy.Search(searchEdit.getText().toString());
+                searchEdit.setText(tracks.get(0).Album);
+            } catch (UnirestException | TagException |
+                    CannotWriteException | ReadOnlyFileException |
+                    CannotReadException | IOException |
+                    InvalidAudioFrameException e) {
+                e.printStackTrace();
+            }
+            Intent intent = new Intent(this, LocalMusicActivity.class);
+            intent.putExtra("SEARCHED_KEY", searchEdit.getText().toString());
+            startActivity(intent);
+        } else
+            Toast.makeText(MainActivity.this, "Please input a name", Toast.LENGTH_SHORT).show();
     }
 
     public void startPopup(View view) {

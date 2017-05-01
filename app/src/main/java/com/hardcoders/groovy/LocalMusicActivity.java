@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -105,19 +106,24 @@ public class LocalMusicActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MUSIC_ID && resultCode == RESULT_OK) {
             if ((data != null) && (data.getData() != null)) {
+                final Snackbar snackbar = Snackbar
+                        .make(listView, "Downloading albumart for song", Snackbar.LENGTH_INDEFINITE);
+                View view = snackbar.getView();
+                view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+                snackbar.show();
                 Uri audioFileUri = data.getData();
                 File audioFile = new File(getPath(audioFileUri));
                 try {
                     MusicMetadataSet src_set = new MyID3().read(audioFile);
                     MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
-                    Toast.makeText(this, "Downloading data Required", Toast.LENGTH_SHORT).show();
                     //print artist,album,song name
                     String artist = metadata.getArtist();
                     String album = metadata.getAlbum();
                     String song_title = metadata.getSongTitle();
                     Log.d("Music Selected", artist + "\t" + album + "\t" + song_title + "\t");
                     // Here we download the songs albumart and set all the tags
-                    ImageDownloader imageDownloader = new ImageDownloader(this, selectedTrack, audioFile);
+                    ImageDownloader imageDownloader = new ImageDownloader(this, selectedTrack,
+                            audioFile, snackbar);
                     imageDownloader.execute();
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,6 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 /**
  * Created by shiraz on 1/5/17.
  */
@@ -32,11 +35,13 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
     Track track;
     File audioFile;
     Context context;
+    Snackbar snackbar;
 
-    public ImageDownloader(Context context, Track track, File audioFile) {
+    public ImageDownloader(Context context, Track track, File audioFile, Snackbar snackbar) {
         this.track = track;
         this.context = context;
         this.audioFile = audioFile;
+        this.snackbar = snackbar;
     }
 
     @Override
@@ -81,7 +86,6 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
                     + fileArray[fileArray.length - 1];
             String directoryPath = audioFile.getParent();
             String newAudioFilePath = directoryPath + "/" + newFileName;
-
             Log.d("Image Download", newAudioFilePath);
             File newAudioFile = new File(newAudioFilePath);
             audioFile.renameTo(newAudioFile);
@@ -98,14 +102,15 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
             metadata.setYear(String.valueOf(track.Year));
             new MyID3().update(newAudioFile, src_set, metadata);
             Log.d("Image Download", "Done");
-            Toast.makeText(context, "Music details changed", Toast.LENGTH_SHORT).show();
-
+            snackbar.setText("Song tags set");
+            wait(2000);
+            snackbar.dismiss();
 
             DeleteMP3FromMediaStore(context, audioFile.getAbsolutePath());
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             intent.setData(Uri.fromFile(newAudioFile));
             context.sendBroadcast(intent);
-        } catch (ID3WriteException | IOException e) {
+        } catch (ID3WriteException | IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }
