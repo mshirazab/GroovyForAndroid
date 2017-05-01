@@ -48,15 +48,7 @@ public class MainActivity extends AppCompatActivity {
         searchEdit = (EditText) findViewById(R.id.main_edit);
         button = (Button) findViewById(R.id.main_button);
         String searchedText = searchEdit.getText().toString();
-        //TODO : do somthing with searched word
-        /*
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String searchedText = searchEdit.getText().toString();
-                //TODO : do somthing with searched word
-            }
-        });*/
+        button.setEnabled(false);
         searchEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
