@@ -1,18 +1,24 @@
 package com.hardcoders.groovy;
 
+import android.Manifest;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -31,6 +37,8 @@ public class LocalMusicActivity extends AppCompatActivity {
     private static final int MUSIC_ID = 968;
     CustomTask customTask;
     Track selectedTrack = null;
+    private static final int permissionResult = 281;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +47,7 @@ public class LocalMusicActivity extends AppCompatActivity {
         setContentView(R.layout.activity_local_music);
         String s = getIntent().getStringExtra("SEARCHED_KEY");
         listView = (ListView) findViewById(R.id.local_listview);
-        ProgressBar progressBar = (ProgressBar) findViewById(R.id.my_progressbar);
+        progressBar = (ProgressBar) findViewById(R.id.my_progressbar);
         tracks = new ArrayList<>();
         CustomAdapter adapter = new CustomAdapter(this, tracks);
         customTask = new CustomTask(adapter, progressBar);
@@ -49,9 +57,23 @@ public class LocalMusicActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedTrack = tracks.get(position);
-                startPopup(view);
             }
         });
+    }
+
+    void requestPermission() {
+
+        int writePermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int readPermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (writePermissionCheck == PackageManager.PERMISSION_DENIED ||
+                readPermissionCheck == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, permissionResult);
+        } else {
+            startPopup();
+        }
     }
 
     @Override
@@ -60,7 +82,7 @@ public class LocalMusicActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    public void startPopup(View view) {
+    public void startPopup() {
         /*Intent intent = new Intent(this, LocalMusicActivity.class);
         startActivity(intent);*/
         Intent intent = new Intent();
@@ -112,4 +134,19 @@ public class LocalMusicActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case permissionResult: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    startPopup();
+                } else {
+                    Toast.makeText(this, "Allow Permission", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+    }
 }
