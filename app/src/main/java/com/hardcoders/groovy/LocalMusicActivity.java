@@ -34,7 +34,6 @@ public class LocalMusicActivity extends AppCompatActivity {
     Track selectedTrack = null;
     private static final int permissionResult = 281;
     ProgressBar progressBar;
-    View bottomSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +41,6 @@ public class LocalMusicActivity extends AppCompatActivity {
         final ArrayList<Track> tracks;
         setContentView(R.layout.activity_local_music);
         String s = getIntent().getStringExtra("SEARCHED_KEY");
-        bottomSheet = findViewById(R.id.bottom_sheet1);
         listView = (ListView) findViewById(R.id.local_listview);
         progressBar = (ProgressBar) findViewById(R.id.my_progressbar);
         tracks = new ArrayList<>();
@@ -102,23 +100,13 @@ public class LocalMusicActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MUSIC_ID && resultCode == RESULT_OK) {
-            final BottomSheetBehavior mBottomSheetBehavior1;
-            mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
-            mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_EXPANDED);
-            TextView textView = (TextView) bottomSheet.findViewById(R.id.bottom_sheet_text);
-            textView.setText("Downloading Text");
-            bottomSheet.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                }
-            });
             if ((data != null) && (data.getData() != null)) {
                 Uri audioFileUri = data.getData();
                 File audioFile = new File(getPath(audioFileUri));
                 try {
                     MusicMetadataSet src_set = new MyID3().read(audioFile);
                     MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
+                    Toast.makeText(this, "Downloading data Required", Toast.LENGTH_SHORT).show();
                     //print artist,album,song name
                     String artist = metadata.getArtist();
                     String album = metadata.getAlbum();
