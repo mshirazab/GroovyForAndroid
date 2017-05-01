@@ -39,14 +39,17 @@ public class LocalMusicActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final ArrayList<Track> tracks;
         setContentView(R.layout.activity_local_music);
+
         String s = getIntent().getStringExtra("SEARCHED_KEY");
+
         listView = (ListView) findViewById(R.id.local_listview);
         progressBar = (ProgressBar) findViewById(R.id.my_progressbar);
-        tracks = new ArrayList<>();
+        TextView textView = (TextView) findViewById(R.id.no_results_text_view);
+
+        final ArrayList<Track> tracks = new ArrayList<>();
         CustomAdapter adapter = new CustomAdapter(this, tracks);
-        customTask = new CustomTask(adapter, progressBar);
+        customTask = new CustomTask(adapter, progressBar, textView);
         customTask.execute(s);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -80,8 +83,7 @@ public class LocalMusicActivity extends AppCompatActivity {
     }
 
     public void startPopup() {
-        /*Intent intent = new Intent(this, LocalMusicActivity.class);
-        startActivity(intent);*//*
+        /*
         Intent intent;
         intent = new Intent();
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -107,7 +109,7 @@ public class LocalMusicActivity extends AppCompatActivity {
         if (requestCode == MUSIC_ID && resultCode == RESULT_OK) {
             if ((data != null) && (data.getData() != null)) {
                 final Snackbar snackbar = Snackbar
-                        .make(listView, "Downloading albumart for song", Snackbar.LENGTH_SHORT);
+                        .make(listView, "Downloading albumart for song", Snackbar.LENGTH_LONG);
                 View view = snackbar.getView();
                 view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
                 snackbar.show();

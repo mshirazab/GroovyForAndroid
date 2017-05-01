@@ -4,4 +4,5 @@
     <string name="hello">hello</string>
     <string name="click_me">Click Me</string>
     <string name="search">search</string>
+    <string name="no_internet_message">No internet or no Elements found</string>
 </resources>

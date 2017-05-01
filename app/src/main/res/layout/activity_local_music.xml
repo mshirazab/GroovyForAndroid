@@ -15,4 +15,12 @@
         android:id="@+id/local_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textSize="22sp"
+        android:id="@+id/no_results_text_view"/>
 </RelativeLayout>
