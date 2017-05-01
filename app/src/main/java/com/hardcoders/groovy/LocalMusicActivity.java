@@ -66,7 +66,7 @@ public class LocalMusicActivity extends AppCompatActivity {
         int writePermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int readPermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                Manifest.permission.READ_EXTERNAL_STORAGE);
         if (writePermissionCheck == PackageManager.PERMISSION_DENIED ||
                 readPermissionCheck == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this,
