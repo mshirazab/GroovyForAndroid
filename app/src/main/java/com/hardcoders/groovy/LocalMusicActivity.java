@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.cmc.music.metadata.MusicMetadata;
@@ -32,6 +34,7 @@ public class LocalMusicActivity extends AppCompatActivity {
     Track selectedTrack = null;
     private static final int permissionResult = 281;
     ProgressBar progressBar;
+    View bottomSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class LocalMusicActivity extends AppCompatActivity {
         final ArrayList<Track> tracks;
         setContentView(R.layout.activity_local_music);
         String s = getIntent().getStringExtra("SEARCHED_KEY");
+        bottomSheet = findViewById(R.id.bottom_sheet1);
         listView = (ListView) findViewById(R.id.local_listview);
         progressBar = (ProgressBar) findViewById(R.id.my_progressbar);
         tracks = new ArrayList<>();
@@ -95,18 +99,20 @@ public class LocalMusicActivity extends AppCompatActivity {
         return cursor.getString(column_index);
     }
 
-    public long getAlbumID(Uri uri) {
-        String[] projection = {MediaStore.Audio.Media.ALBUM_ID};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        startManagingCursor(cursor);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
-        cursor.moveToFirst();
-        return cursor.getLong(column_index);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MUSIC_ID && resultCode == RESULT_OK) {
+            final BottomSheetBehavior mBottomSheetBehavior1;
+            mBottomSheetBehavior1 = BottomSheetBehavior.from(bottomSheet);
+            mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_EXPANDED);
+            TextView textView = (TextView) bottomSheet.findViewById(R.id.bottom_sheet_text);
+            textView.setText("Downloading Text");
+            bottomSheet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mBottomSheetBehavior1.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                }
+            });
             if ((data != null) && (data.getData() != null)) {
                 Uri audioFileUri = data.getData();
                 File audioFile = new File(getPath(audioFileUri));
