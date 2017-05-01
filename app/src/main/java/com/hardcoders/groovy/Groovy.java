@@ -45,7 +45,8 @@ class Track {
             Genres.add(item.Genres.get(i));
         }
         ImageURL = item.ImageUrl;
-        ImageURLShort = ImageURL + "&w=250&h=250";
+        ImageURLShort = ImageURL + "&w=150&h=150";
+        ImageURL += "&w=1000&h=1000";
         Year = Integer.decode(item.ReleaseDate.substring(0, 4));
     }
 }
