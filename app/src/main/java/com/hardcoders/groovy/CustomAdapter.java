@@ -27,7 +27,7 @@ class CustomAdapter extends ArrayAdapter<Track> {
         View view = convertView;
         if (view == null) {
             LayoutInflater layoutInflater = LayoutInflater.from(getContext());
-            view = layoutInflater.inflate(R.layout.item, parent);
+            view = layoutInflater.inflate(R.layout.item, null);
         }
         Track mp = getItem(position);
         if (mp != null) {
