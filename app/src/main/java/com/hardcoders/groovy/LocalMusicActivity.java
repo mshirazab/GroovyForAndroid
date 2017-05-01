@@ -1,11 +1,9 @@
 package com.hardcoders.groovy;
 
 import android.Manifest;
-import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,17 +18,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
-
-import org.cmc.music.metadata.ImageData;
 import org.cmc.music.metadata.MusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
 import org.cmc.music.myid3.MyID3;
 
 import java.io.File;
 import java.util.ArrayList;
-
-import static com.hardcoders.groovy.MainActivity.sArtworkUri;
 
 public class LocalMusicActivity extends AppCompatActivity {
     ListView listView;
