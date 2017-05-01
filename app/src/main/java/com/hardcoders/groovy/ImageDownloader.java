@@ -78,11 +78,16 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
             MusicMetadataSet src_set = new MyID3().read(audioFile);
             MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
             ImageData imageData = new ImageData(bytes, "", "", 3);
+            metadata.clear();
             metadata.addPicture(imageData);
-            metadata.setAlbum(track.Album);
-            metadata.setArtist(TextUtils.join(", ", track.Artists));
+
             metadata.setSongTitle(track.Name);
-            metadata.setGenre(track.Genres.get(0));
+            metadata.setArtist(TextUtils.join(", ", track.Artists));
+            metadata.setTrackNumber(track.TrackNumber);
+            metadata.setAlbum(track.Album);
+            metadata.setGenre(TextUtils.join(", ", track.Genres));
+            metadata.setYear(String.valueOf(track.Year));
+
             File dst = new File(audioFile.getAbsolutePath());
             new MyID3().update(audioFile, src_set, metadata);
             Log.d("Image Download", "Done");
