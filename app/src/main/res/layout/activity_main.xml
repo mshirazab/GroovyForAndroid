@@ -21,4 +21,10 @@
         android:layout_height="wrap_content"
         android:onClick="startNewActivity"
         android:text="@string/search" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Made by Nithin, Yeteesh and Nithin"
+        android:textSize="22sp"/>
 </LinearLayout>
