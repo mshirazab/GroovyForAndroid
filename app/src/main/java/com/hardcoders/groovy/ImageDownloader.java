@@ -105,7 +105,7 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
             audioFile.renameTo(newAudioFile);
             DeleteMP3FromMediaStore(context, audioFile.getAbsolutePath());
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            intent.setData(Uri.fromFile(audioFile));
+            intent.setData(Uri.fromFile(newAudioFile));
             context.sendBroadcast(intent);
         } catch (ID3WriteException | IOException e) {
             e.printStackTrace();
