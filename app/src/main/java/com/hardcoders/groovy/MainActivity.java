@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 if (charSequence.toString().trim().length() > 0) {
                     button.setEnabled(true);
                 } else {
+                    Toast.makeText(MainActivity.this, "Please input a name", Toast.LENGTH_SHORT).show();
                     button.setEnabled(false);
                 }
             }
