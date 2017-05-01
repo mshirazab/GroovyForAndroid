@@ -1,13 +1,8 @@
 package com.hardcoders.groovy;
 
-/**
- * Created by shiraz on 30/4/17.
- */
 
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -18,27 +13,29 @@ import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.TagException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * This searches for the songs in the background and
+ * sets the listView.
+ */
+
 class CustomTask extends AsyncTask<String, Void, ArrayList<Track>> {
+    private CustomAdapter adapter;
+    private ProgressBar progressBar;
 
-    private static final String TAG = "CustomTask";
-    EditText editText;
-    CustomAdapter adapter;
-
-    public CustomTask(CustomAdapter adapter) {
+    CustomTask(CustomAdapter adapter, ProgressBar progressBar) {
         this.adapter = adapter;
+        this.progressBar = progressBar;
     }
 
     @Override
     protected ArrayList<Track> doInBackground(String... params) {
         try {
-            ArrayList<Track> tracks = Groovy.Search(params[0]);
-            return tracks;
+            if (isCancelled())
+                return null;
+            return Groovy.Search(params[0]);
         } catch (UnirestException | TagException |
                 CannotWriteException | ReadOnlyFileException |
                 CannotReadException | IOException |
@@ -50,7 +47,9 @@ class CustomTask extends AsyncTask<String, Void, ArrayList<Track>> {
 
     @Override
     protected void onPostExecute(ArrayList<Track> s) {
-        adapter.addAll(s);
+        progressBar.setVisibility(View.GONE);
+        if (s != null)
+            adapter.addAll(s);
     }
 }
 
