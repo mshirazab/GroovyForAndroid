@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -42,7 +43,7 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
     protected byte[] doInBackground(String... ignored) {
         DefaultHttpClient client = new DefaultHttpClient();
         try {
-            HttpUriRequest request = new HttpGet(track.ImageURL);
+            HttpUriRequest request = new HttpGet(track.ImageURLShort);
             HttpResponse response = client.execute(request);
             HttpEntity entity = response.getEntity();
             int imageLength = (int) (entity.getContentLength());
@@ -75,7 +76,7 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
     @Override
     protected void onPostExecute(byte[] bytes) {
         try {
-            Toast.makeText(context, track.ImageURL, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, track.ImageURL, Toast.LENGTH_SHORT).show();
             String[] fileArray = audioFile.getName().split("\\.");
             String newFileName = GetFileName(TextUtils.join(", ", track.Artists), track.Name) + "."
                     + fileArray[fileArray.length - 1];
@@ -103,13 +104,18 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
 
 
             audioFile.renameTo(newAudioFile);
-
-
+            DeleteMP3FromMediaStore(context, audioFile.getAbsolutePath());
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            intent.setData(Uri.fromFile(newAudioFile));
+            intent.setData(Uri.fromFile(audioFile));
             context.sendBroadcast(intent);
         } catch (ID3WriteException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void DeleteMP3FromMediaStore(Context context, String path) {
+        Uri rootUri = MediaStore.Audio.Media.getContentUriForPath(path);
+        context.getContentResolver().delete(rootUri,
+                MediaStore.MediaColumns.DATA + "=?", new String[]{path});
     }
 }

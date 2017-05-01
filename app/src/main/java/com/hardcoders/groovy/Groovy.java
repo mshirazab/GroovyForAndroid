@@ -23,17 +23,17 @@ import java.util.ArrayList;
  */
 class Track {
 
-    public String Name;
-    public ArrayList<String> Artists = new ArrayList<String>();
-    public int TrackNumber;
-    public String Album;
-    public String AlbumArtist;
-    public ArrayList<String> Genres = new ArrayList<String>();
-    public String ImageURL;
-    public String ImageURLShort;
-    public int Year;
+    String Name;
+    ArrayList<String> Artists = new ArrayList<>();
+    int TrackNumber;
+    String Album;
+    String AlbumArtist;
+    ArrayList<String> Genres = new ArrayList<String>();
+    String ImageURL;
+     String ImageURLShort;
+     int Year;
 
-    public Track(Item item) {
+     Track(Item item) {
         Name = item.Name;
         for (int i = 0; i < item.Artists.size(); i++) {
             Artists.add(item.Artists.get(i).Artist.Name);
@@ -46,76 +46,76 @@ class Track {
         }
         ImageURL = item.ImageUrl;
         ImageURLShort = ImageURL + "&w=150&h=150";
-        ImageURL += "&w=1000&h=1000";
+        //ImageURL += "&w=1000&h=1000";
         Year = Integer.decode(item.ReleaseDate.substring(0, 4));
     }
 }
 
 class Album {
-    public String Id;
-    public String Name;
-    public String ImageUrl;
-    public String Link;
-    public String Source;
-    public String CompatibleSources;
+     String Id;
+     String Name;
+     String ImageUrl;
+     String Link;
+     String Source;
+     String CompatibleSources;
 }
 
 class ArtistC2 {
-    public String Id;
-    public String Name;
-    public String ImageUrl;
-    public String Link;
-    public String Source;
-    public String CompatibleSources;
+     String Id;
+     String Name;
+     String ImageUrl;
+     String Link;
+     String Source;
+     String CompatibleSources;
 }
 
 class ArtistC {
-    public String Role;
-    public ArtistC2 Artist;
+     String Role;
+     ArtistC2 Artist;
 }
 
 class OtherIds {
-    public String isrc;
+     String isrc;
 }
 
 class Item {
-    public String ReleaseDate;
-    public String Duration;
-    public int TrackNumber;
-    public boolean IsExplicit;
-    public ArrayList<String> Genres = new ArrayList<String>();
-    public ArrayList<String> Subgenres = new ArrayList<String>();
-    public ArrayList<String> Rights = new ArrayList<String>();
-    public Album Album;
-    public ArrayList<ArtistC> Artists = new ArrayList<ArtistC>();
-    public String Id;
-    public String Name;
-    public String ImageUrl;
-    public String Link;
-    public OtherIds OtherIds;
-    public String Source;
-    public String CompatibleSources;
-    public String Subtitle;
+     String ReleaseDate;
+     String Duration;
+     int TrackNumber;
+     boolean IsExplicit;
+     ArrayList<String> Genres = new ArrayList<String>();
+     ArrayList<String> Subgenres = new ArrayList<String>();
+     ArrayList<String> Rights = new ArrayList<String>();
+     Album Album;
+     ArrayList<ArtistC> Artists = new ArrayList<ArtistC>();
+     String Id;
+     String Name;
+     String ImageUrl;
+     String Link;
+     OtherIds OtherIds;
+     String Source;
+     String CompatibleSources;
+     String Subtitle;
 }
 
 class Tracks {
-    public ArrayList<Item> Items = new ArrayList<Item>();
-    public String ContinuationToken;
-    public int TotalItemCount;
+     ArrayList<Item> Items = new ArrayList<Item>();
+     String ContinuationToken;
+     int TotalItemCount;
 }
 
 class RootObject {
-    public Tracks Tracks;
-    public String Culture;
+     Tracks Tracks;
+     String Culture;
 }
 
 class AccessTokenObject {
-    public String token_type;
-    public String access_token;
-    public int expires_in;
+     String token_type;
+     String access_token;
+     int expires_in;
 }
 
-public class Groovy {
+ class Groovy {
 
     private static String EncodeQuery(String query) {
         query = query.trim();
@@ -123,7 +123,7 @@ public class Groovy {
         return query;
     }
 
-    public static ArrayList<Track> Search(String query) throws UnirestException, TagException, CannotWriteException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
+     static ArrayList<Track> Search(String query) throws UnirestException, TagException, CannotWriteException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
 
         String service = "https://login.live.com/accesstoken.srf";
         String clientId = "fcb2b041-fe82-4c06-8a30-d28a9ddc805d";
@@ -152,7 +152,7 @@ public class Groovy {
 
 
         RootObject rootObject = gson.fromJson(myString, RootObject.class);
-        ArrayList<Track> tracks = new ArrayList<Track>();
+        ArrayList<Track> tracks = new ArrayList<>();
         for (Item item : rootObject.Tracks.Items) {
             Track track = new Track(item);
             tracks.add(track);

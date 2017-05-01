@@ -80,7 +80,11 @@ public class LocalMusicActivity extends AppCompatActivity {
 
     public void startPopup() {
         /*Intent intent = new Intent(this, LocalMusicActivity.class);
-        startActivity(intent);*/
+        startActivity(intent);*//*
+        Intent intent;
+        intent = new Intent();
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.setType("audio/mpeg");*/
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_PICK);
         intent.setData(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
