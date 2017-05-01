@@ -16,6 +16,7 @@
         android:layout_height="wrap_content" />
 
     <Button
+        style="@style/AlertDialog.AppCompat.Light"
         android:id="@+id/main_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,8 +24,9 @@
         android:text="@string/search" />
 
     <TextView
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Made by Nithin, Yeteesh and Nithin"
+        android:text="Made by Nithin, Yeteesh and Shiraz"
         android:textSize="22sp"/>
 </LinearLayout>
