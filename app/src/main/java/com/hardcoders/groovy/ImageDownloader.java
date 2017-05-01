@@ -84,7 +84,8 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
 
             Log.d("Image Download", newAudioFilePath);
             File newAudioFile = new File(newAudioFilePath);
-            MusicMetadataSet src_set = new MyID3().read(audioFile);
+            audioFile.renameTo(newAudioFile);
+            MusicMetadataSet src_set = new MyID3().read(newAudioFile);
             MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
             ImageData imageData = new ImageData(bytes, "", "", 3);
             metadata.clear();
@@ -95,14 +96,11 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
             metadata.setAlbum(track.Album);
             metadata.setGenre(TextUtils.join(", ", track.Genres));
             metadata.setYear(String.valueOf(track.Year));
-
-            File dst = new File(audioFile.getAbsolutePath());
-            new MyID3().update(audioFile, src_set, metadata);
+            new MyID3().update(newAudioFile, src_set, metadata);
             Log.d("Image Download", "Done");
             Toast.makeText(context, "Music details changed", Toast.LENGTH_SHORT).show();
 
 
-            audioFile.renameTo(newAudioFile);
             DeleteMP3FromMediaStore(context, audioFile.getAbsolutePath());
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             intent.setData(Uri.fromFile(newAudioFile));
