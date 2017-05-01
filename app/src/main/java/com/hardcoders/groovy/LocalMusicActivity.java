@@ -57,6 +57,7 @@ public class LocalMusicActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedTrack = tracks.get(position);
+                requestPermission();
             }
         });
     }
