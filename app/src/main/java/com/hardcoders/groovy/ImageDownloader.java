@@ -62,9 +62,25 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
         return null;
     }
 
+    public static String GetFileName(String artist, String title) {
+        String fileName = artist + " - " + title;
+        char forbiddenCharacters[] = new char[] {'/', '\\' , ':', '?' , '*', '+', '%'};
+        for(int i = 0; i < forbiddenCharacters.length; i++) {
+            fileName = fileName.replace(forbiddenCharacters[i], ' ');
+        }
+        return fileName;
+    }
+
     @Override
     protected void onPostExecute(byte[] bytes) {
         try {
+            String newFileName = GetFileName(TextUtils.join(", ", track.Artists), track.Name);
+            String directoryPath = audioFile.getParent();
+            String newAudioFilePath = directoryPath + "/" + newFileName;
+            Log.d("Image Download", newAudioFilePath);
+            //TODO File newAudioFile = new File(newAudioFilePath);
+
+
             MusicMetadataSet src_set = new MyID3().read(audioFile);
             MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
             ImageData imageData = new ImageData(bytes, "", "", 3);
@@ -81,6 +97,11 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
             File dst = new File(audioFile.getAbsolutePath());
             new MyID3().update(audioFile, src_set, metadata);
             Log.d("Image Download", "Done");
+
+
+            //TODO audioFile.renameTo(newAudioFile);
+
+
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             intent.setData(Uri.fromFile(audioFile));
             context.sendBroadcast(intent);
