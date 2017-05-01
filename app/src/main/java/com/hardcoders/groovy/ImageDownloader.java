@@ -42,7 +42,7 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
     protected byte[] doInBackground(String... ignored) {
         DefaultHttpClient client = new DefaultHttpClient();
         try {
-            HttpUriRequest request = new HttpGet(track.ImageURLShort);
+            HttpUriRequest request = new HttpGet(track.ImageURL);
             HttpResponse response = client.execute(request);
             HttpEntity entity = response.getEntity();
             int imageLength = (int) (entity.getContentLength());
@@ -75,9 +75,13 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
     @Override
     protected void onPostExecute(byte[] bytes) {
         try {
-            String newFileName = GetFileName(TextUtils.join(", ", track.Artists), track.Name);
+            Toast.makeText(context, track.ImageURL, Toast.LENGTH_SHORT).show();
+            String[] fileArray = audioFile.getName().split("\\.");
+            String newFileName = GetFileName(TextUtils.join(", ", track.Artists), track.Name) + "."
+                    + fileArray[fileArray.length - 1];
             String directoryPath = audioFile.getParent();
             String newAudioFilePath = directoryPath + "/" + newFileName;
+
             Log.d("Image Download", newAudioFilePath);
             File newAudioFile = new File(newAudioFilePath);
             MusicMetadataSet src_set = new MyID3().read(audioFile);
@@ -98,11 +102,11 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
             Toast.makeText(context, "Music details changed", Toast.LENGTH_SHORT).show();
 
 
-            //TODO audioFile.renameTo(newAudioFile);
+            audioFile.renameTo(newAudioFile);
 
 
             Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            intent.setData(Uri.fromFile(audioFile));
+            intent.setData(Uri.fromFile(newAudioFile));
             context.sendBroadcast(intent);
         } catch (ID3WriteException | IOException e) {
             e.printStackTrace();
