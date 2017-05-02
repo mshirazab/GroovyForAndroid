@@ -8,10 +8,8 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -27,12 +25,6 @@ import org.cmc.music.myid3.MyID3;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
-import static android.widget.Toast.LENGTH_SHORT;
-
-/**
- * Created by shiraz on 1/5/17.
- */
 
 class ImageDownloader extends AsyncTask<String, Void, byte[]> {
     private ListView listView;

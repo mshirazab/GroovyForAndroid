@@ -24,7 +24,6 @@ import org.cmc.music.metadata.MusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
 import org.cmc.music.myid3.MyID3;
 
-import java.io.BufferedReader;
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
