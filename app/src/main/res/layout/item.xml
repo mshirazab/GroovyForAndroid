@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="@dimen/standard_margin">
 
     <ImageView
         android:id="@+id/item_art"
         android:layout_width="125dp"
         android:layout_height="125dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginEnd="@dimen/standard_margin"
         android:contentDescription="@string/album_art"
         android:src="@mipmap/ic_launcher" />
 
@@ -30,7 +30,7 @@
 
         <TextView
             android:id="@+id/item_album"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:maxLines="1"
@@ -38,16 +38,16 @@
 
         <TextView
             android:id="@+id/item_artist"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:maxLines="1"
             android:text="@string/hello" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Source : Groove Music"/>
+            android:text="@string/source_groove_music"/>
 
     </LinearLayout>
 

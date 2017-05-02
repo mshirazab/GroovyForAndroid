@@ -34,13 +34,13 @@ import static android.widget.Toast.LENGTH_SHORT;
  * Created by shiraz on 1/5/17.
  */
 
-public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
-    ListView listView;
-    Track track;
-    File audioFile;
-    Context context;
+class ImageDownloader extends AsyncTask<String, Void, byte[]> {
+    private ListView listView;
+    private Track track;
+    private File audioFile;
+    private Context context;
 
-    public ImageDownloader(Context context, Track track, File audioFile, ListView listView) {
+    ImageDownloader(Context context, Track track, File audioFile, ListView listView) {
         this.track = track;
         this.context = context;
         this.audioFile = audioFile;
@@ -72,26 +72,26 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
         return null;
     }
 
-    public static String GetFileName(String artist, String title) {
-        String fileName = artist + " - " + title;
-        char forbiddenCharacters[] = new char[]{'/', '\\', ':', '?', '*', '+', '%'};
-        for (int i = 0; i < forbiddenCharacters.length; i++) {
-            fileName = fileName.replace(forbiddenCharacters[i], ' ');
-        }
-        return fileName;
-    }
-
     @Override
     protected void onPostExecute(byte[] bytes) {
         try {
+
+            // Sending message that the song has been downloaded
+            Snackbar snackbar = Snackbar.make(listView, "Download done", Snackbar.LENGTH_LONG);
+            View view = snackbar.getView();
+            view.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
+            snackbar.show();
+
+            // Changing filename to "<artists> - <song-name>.mp3"
             String[] fileArray = audioFile.getName().split("\\.");
             String newFileName = GetFileName(TextUtils.join(", ", track.Artists), track.Name) + "."
                     + fileArray[fileArray.length - 1];
             String directoryPath = audioFile.getParent();
             String newAudioFilePath = directoryPath + "/" + newFileName;
-            Log.d("Image Download", newAudioFilePath);
             File newAudioFile = new File(newAudioFilePath);
             audioFile.renameTo(newAudioFile);
+
+            // Changing the tags of the song
             MusicMetadataSet src_set = new MyID3().read(newAudioFile);
             MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
             ImageData imageData = new ImageData(bytes, "", "", 3);
@@ -104,24 +104,34 @@ public class ImageDownloader extends AsyncTask<String, Void, byte[]> {
             metadata.setGenre(TextUtils.join(", ", track.Genres));
             metadata.setYear(String.valueOf(track.Year));
             new MyID3().update(newAudioFile, src_set, metadata);
-            Log.d("Image Download", "Done");
-            Snackbar snackbar = Snackbar.make(listView, "Download done", Snackbar.LENGTH_LONG);
-            View view = snackbar.getView();
-            view.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
-            snackbar.show();
 
-            DeleteMP3FromMediaStore(context, audioFile.getAbsolutePath());
-            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            intent.setData(Uri.fromFile(newAudioFile));
-            context.sendBroadcast(intent);
+            // Removing the old file and adding the new file
+            DeleteFromMediaStore(context, audioFile);
+            AddToMediaStore(context, newAudioFile);
         } catch (ID3WriteException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void DeleteMP3FromMediaStore(Context context, String path) {
+    private void DeleteFromMediaStore(Context context, File file) {
+        String path = file.getAbsolutePath();
         Uri rootUri = MediaStore.Audio.Media.getContentUriForPath(path);
         context.getContentResolver().delete(rootUri,
                 MediaStore.MediaColumns.DATA + "=?", new String[]{path});
+    }
+
+    private void AddToMediaStore(Context context, File file) {
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intent.setData(Uri.fromFile(file));
+        context.sendBroadcast(intent);
+    }
+
+    private static String GetFileName(String artist, String title) {
+        String fileName = artist + " - " + title;
+        char forbiddenCharacters[] = new char[]{'/', '\\', ':', '?', '*', '+', '%'};
+        for (char forbiddenCharacter : forbiddenCharacters) {
+            fileName = fileName.replace(forbiddenCharacter, ' ');
+        }
+        return fileName;
     }
 }

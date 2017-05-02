@@ -73,26 +73,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startNewActivity(View view) {
-        if (button.isEnabled()) {
-            try {
-                ArrayList<Track> tracks = Groovy.Search(searchEdit.getText().toString());
-                searchEdit.setText(tracks.get(0).Album);
-            } catch (UnirestException | TagException |
-                    CannotWriteException | ReadOnlyFileException |
-                    CannotReadException | IOException |
-                    InvalidAudioFrameException e) {
-                e.printStackTrace();
-            }
-            Intent intent = new Intent(this, LocalMusicActivity.class);
-            intent.putExtra("SEARCHED_KEY", searchEdit.getText().toString());
-            startActivity(intent);
-        } else
-            Toast.makeText(MainActivity.this, "Please input a name", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, LocalMusicActivity.class);
+        intent.putExtra("SEARCHED_KEY", searchEdit.getText().toString());
+        startActivity(intent);
     }
 
     public void startPopup(View view) {
-        /*Intent intent = new Intent(this, LocalMusicActivity.class);
-        startActivity(intent);*/
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_PICK);
         intent.setData(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
@@ -108,31 +94,6 @@ public class MainActivity extends AppCompatActivity {
         return cursor.getString(column_index);
     }
 
-    public long getAlbumID(Uri uri) {
-        String[] projection = {MediaStore.Audio.Media.ALBUM_ID};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        startManagingCursor(cursor);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID);
-        cursor.moveToFirst();
-        return cursor.getLong(column_index);
-    }
-
-    public static byte[] readFile(File file) throws IOException {
-        // Open file
-
-        try (RandomAccessFile f = new RandomAccessFile(file, "r")) {
-            // Get and check length
-            long longlength = f.length();
-            int length = (int) longlength;
-            if (length != longlength) throw new IOException("File size >= 2 GB");
-
-            // Read file and return data
-            byte[] data = new byte[length];
-            f.readFully(data);
-            return data;
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MUSIC_ID && resultCode == RESULT_OK) {
@@ -142,27 +103,10 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     MusicMetadataSet src_set = new MyID3().read(audioFile);
                     MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
-                    //print artist,album,song name
-                    String artist = metadata.getArtist();
-                    String album = metadata.getAlbum();
                     String song_title = metadata.getSongTitle();
-                    Log.d("Music Selected", artist + "\t" + album + "\t" + song_title + "\t");
-
-                    //show album art
-                    Uri uri = ContentUris.withAppendedId(sArtworkUri, getAlbumID(audioFileUri));
-                    //Picasso.with(this).load(uri).into((ImageView) findViewById(R.id.my_image));
-
-
-                    //TODO : set image source
-                    /*File img;
-                    ImageData imageData = new ImageData(readFile(img), "", "", 3);
-                    metadata.addPicture(imageData);
-                    metadata.setArtist("Bob Marley");
-
-                    File dst = new File(audioFile.getAbsolutePath() + " (Edited)");
-                    new MyID3().write(audioFile, dst, src_set, metadata);*/
+                    searchEdit.setText(song_title);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Toast.makeText(this, "An error occured", Toast.LENGTH_SHORT).show();
                 }
             }
         }

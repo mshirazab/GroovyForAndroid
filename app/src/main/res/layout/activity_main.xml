@@ -13,6 +13,8 @@
 
     <EditText
         android:id="@+id/main_edit"
+        android:hint="@string/song_name"
+        android:inputType="textNoSuggestions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -24,6 +26,12 @@
         android:onClick="startNewActivity"
         android:text="@string/search" />
 
+    <Button
+        android:theme="@style/Theme.Design.Light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_song"
+        android:onClick="startPopup"/>
     <TextView
         android:gravity="center"
         android:layout_width="match_parent"

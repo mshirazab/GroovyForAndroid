@@ -5,4 +5,7 @@
     <string name="click_me">Click Me</string>
     <string name="search">search</string>
     <string name="no_internet_message">No internet or no Elements found</string>
+    <string name="select_song">Select Song</string>
+    <string name="song_name">Song Name</string>
+    <string name="source_groove_music">Source : Groove Music</string>
 </resources>
