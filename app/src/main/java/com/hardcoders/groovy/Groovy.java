@@ -48,8 +48,8 @@ class Track {
         }
         ImageURL = item.ImageUrl;
         ImageURLShort = ImageURL + "&w=150&h=150";
-         Log.d("LOL", ImageURL + "&w=1000&h=1000");
-         Log.d("LOL", ImageURL);
+         //Log.d("LOL", ImageURL + "&w=1000&h=1000");
+         //Log.d("LOL", ImageURL);
          ImageURL += "&w=1000&h=1000";
         Year = Integer.decode(item.ReleaseDate.substring(0, 4));
     }

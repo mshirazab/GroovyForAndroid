@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuAdapter;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +27,7 @@ import org.cmc.music.myid3.MyID3;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class LocalMusicActivity extends AppCompatActivity {
     ListView listView;
@@ -34,6 +36,7 @@ public class LocalMusicActivity extends AppCompatActivity {
     Track selectedTrack = null;
     private static final int permissionResult = 281;
     ProgressBar progressBar;
+    String filePath = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +44,13 @@ public class LocalMusicActivity extends AppCompatActivity {
         setContentView(R.layout.activity_local_music);
 
         String s = getIntent().getStringExtra("SEARCHED_KEY");
-
+        String filePath = getIntent().getStringExtra("SELECTED_SONG");
+        if (filePath != null)
+            this.filePath = filePath;
+        else {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
         listView = (ListView) findViewById(R.id.local_listview);
         progressBar = (ProgressBar) findViewById(R.id.my_progressbar);
         TextView textView = (TextView) findViewById(R.id.no_results_text_view);
@@ -71,7 +80,10 @@ public class LocalMusicActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, permissionResult);
         } else {
-            startPopup();
+            if (Objects.equals(filePath, ""))
+                startPopup();
+            else
+                changeSong(new File(filePath));
         }
     }
 
@@ -82,11 +94,6 @@ public class LocalMusicActivity extends AppCompatActivity {
     }
 
     public void startPopup() {
-        /*
-        Intent intent;
-        intent = new Intent();
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.setType("audio/mpeg");*/
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_PICK);
         intent.setData(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
@@ -107,32 +114,37 @@ public class LocalMusicActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == MUSIC_ID && resultCode == RESULT_OK) {
             if ((data != null) && (data.getData() != null)) {
-                final Snackbar snackbar = Snackbar
-                        .make(listView, "Downloading albumart for song", Snackbar.LENGTH_LONG);
-                View view = snackbar.getView();
-                view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-                snackbar.show();
                 Uri audioFileUri = data.getData();
                 File audioFile = new File(getPath(audioFileUri));
-                try {
-                    MusicMetadataSet src_set = new MyID3().read(audioFile);
-                    MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
-                    //print artist,album,song name
-                    String artist = metadata.getArtist();
-                    String album = metadata.getAlbum();
-                    String song_title = metadata.getSongTitle();
-                    Log.d("Music Selected", artist + "\t" + album + "\t" + song_title + "\t");
-                    // Here we download the songs albumart and set all the tags
-                    ImageDownloader imageDownloader = new ImageDownloader(this, selectedTrack,
-                            audioFile, listView);
-                    imageDownloader.execute();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                changeSong(audioFile);
             }
         }
     }
 
+    void changeSong(File audioFile) {
+        final Snackbar snackbar = Snackbar
+                .make(listView, "Downloading albumart for song", Snackbar.LENGTH_LONG);
+        View view = snackbar.getView();
+        view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        snackbar.show();
+        try {
+            MusicMetadataSet src_set = new MyID3().read(audioFile);
+            MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
+            //print artist,album,song name
+            String artist = metadata.getArtist();
+            String album = metadata.getAlbum();
+            String song_title = metadata.getSongTitle();
+            Log.d("Music Selected", artist + "\t" + album + "\t" + song_title + "\t");
+            // Here we download the songs albumart and set all the tags
+            ImageDownloader imageDownloader = new ImageDownloader(this, selectedTrack,
+                    audioFile, listView);
+            imageDownloader.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // If permissions are granted then show
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -140,7 +152,10 @@ public class LocalMusicActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startPopup();
+                    if (Objects.equals(filePath, ""))
+                        startPopup();
+                    else
+                        changeSong(new File(filePath));
                 } else {
                     Toast.makeText(this, "Allow Permission", Toast.LENGTH_SHORT).show();
                 }
