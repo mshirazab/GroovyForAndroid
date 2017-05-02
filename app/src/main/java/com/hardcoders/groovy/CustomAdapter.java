@@ -37,7 +37,6 @@ class CustomAdapter extends ArrayAdapter<Track> {
             ImageView imageView = (ImageView) view.findViewById(R.id.item_art);
 
             nameText.setText(mp.Name);
-            //TODO Set Artist name and album
             artistText.setText(TextUtils.join(", ", mp.Artists));
             albumText.setText(mp.Album);
             Picasso.with(getContext()).load(mp.ImageURLShort).into(imageView);
