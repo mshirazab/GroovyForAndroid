@@ -4,6 +4,7 @@ package com.hardcoders.groovy;
  * Created by nithin on 4/30/17.
  */
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -16,6 +17,7 @@ import org.jaudiotagger.audio.exceptions.CannotWriteException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.TagException;
+import org.w3c.dom.NameList;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,97 +31,105 @@ class Track {
     ArrayList<String> Artists = new ArrayList<>();
     int TrackNumber;
     String Album;
-    String AlbumArtist;
+    //String AlbumArtist;
     ArrayList<String> Genres = new ArrayList<String>();
     String ImageURL;
-     String ImageURLShort;
-     int Year;
+    String ImageURLShort;
+    Uri ImageURI = null;
+    int Year;
+    String Location;
 
-     Track(Item item) {
+    Track(Item item) {
         Name = item.Name;
         for (int i = 0; i < item.Artists.size(); i++) {
             Artists.add(item.Artists.get(i).Artist.Name);
         }
         TrackNumber = item.TrackNumber;
         Album = item.Album.Name;
-        AlbumArtist = Artists.get(0);
+        //AlbumArtist = Artists.get(0);
         for (int i = 0; i < item.Genres.size(); i++) {
             Genres.add(item.Genres.get(i));
         }
         ImageURL = item.ImageUrl;
         ImageURLShort = ImageURL + "&w=150&h=150";
-         //Log.d("LOL", ImageURL + "&w=1000&h=1000");
-         //Log.d("LOL", ImageURL);
-         ImageURL += "&w=1000&h=1000";
+        ImageURL += "&w=1000&h=1000";
         Year = Integer.decode(item.ReleaseDate.substring(0, 4));
+    }
+
+    Track(String Name, String Artist, String Album, String Location, Uri ImageURI) {
+        this.Name = Name;
+        this.Artists.add(Artist);
+        this.Album = Album;
+        this.Location = Location;
+        this.ImageURI = ImageURI;
     }
 }
 
 class Album {
-     String Id;
-     String Name;
-     String ImageUrl;
-     String Link;
-     String Source;
-     String CompatibleSources;
+    String Id;
+    String Name;
+    String ImageUrl;
+    String Link;
+    String Source;
+    String CompatibleSources;
 }
 
 class ArtistC2 {
-     String Id;
-     String Name;
-     String ImageUrl;
-     String Link;
-     String Source;
-     String CompatibleSources;
+    String Id;
+    String Name;
+    String ImageUrl;
+    String Link;
+    String Source;
+    String CompatibleSources;
 }
 
 class ArtistC {
-     String Role;
-     ArtistC2 Artist;
+    String Role;
+    ArtistC2 Artist;
 }
 
 class OtherIds {
-     String isrc;
+    String isrc;
 }
 
 class Item {
-     String ReleaseDate;
-     String Duration;
-     int TrackNumber;
-     boolean IsExplicit;
-     ArrayList<String> Genres = new ArrayList<String>();
-     ArrayList<String> Subgenres = new ArrayList<String>();
-     ArrayList<String> Rights = new ArrayList<String>();
-     Album Album;
-     ArrayList<ArtistC> Artists = new ArrayList<ArtistC>();
-     String Id;
-     String Name;
-     String ImageUrl;
-     String Link;
-     OtherIds OtherIds;
-     String Source;
-     String CompatibleSources;
-     String Subtitle;
+    String ReleaseDate;
+    String Duration;
+    int TrackNumber;
+    boolean IsExplicit;
+    ArrayList<String> Genres = new ArrayList<String>();
+    ArrayList<String> Subgenres = new ArrayList<String>();
+    ArrayList<String> Rights = new ArrayList<String>();
+    Album Album;
+    ArrayList<ArtistC> Artists = new ArrayList<ArtistC>();
+    String Id;
+    String Name;
+    String ImageUrl;
+    String Link;
+    OtherIds OtherIds;
+    String Source;
+    String CompatibleSources;
+    String Subtitle;
 }
 
 class Tracks {
-     ArrayList<Item> Items = new ArrayList<Item>();
-     String ContinuationToken;
-     int TotalItemCount;
+    ArrayList<Item> Items = new ArrayList<Item>();
+    String ContinuationToken;
+    int TotalItemCount;
 }
 
 class RootObject {
-     Tracks Tracks;
-     String Culture;
+    Tracks Tracks;
+    String Culture;
 }
 
 class AccessTokenObject {
-     String token_type;
-     String access_token;
-     int expires_in;
+    String token_type;
+    String access_token;
+    int expires_in;
 }
 
- class Groovy {
+class Groovy {
 
     private static String EncodeQuery(String query) {
         query = query.trim();
@@ -127,7 +137,7 @@ class AccessTokenObject {
         return query;
     }
 
-     static ArrayList<Track> Search(String query) throws UnirestException, TagException, CannotWriteException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
+    static ArrayList<Track> Search(String query) throws UnirestException, TagException, CannotWriteException, ReadOnlyFileException, CannotReadException, InvalidAudioFrameException, IOException {
 
         String service = "https://login.live.com/accesstoken.srf";
         String clientId = "fcb2b041-fe82-4c06-8a30-d28a9ddc805d";

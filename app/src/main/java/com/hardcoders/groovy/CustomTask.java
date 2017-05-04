@@ -20,6 +20,7 @@ import org.jaudiotagger.tag.TagException;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This searches for the songs in the background and
@@ -42,7 +43,8 @@ class CustomTask extends AsyncTask<String, Void, ArrayList<Track>> {
         try {
             if (isCancelled())
                 return null;
-            return Groovy.Search(params[0]);
+            if(params[0]!= null && !Objects.equals(params[0], ""))
+                return Groovy.Search(params[0]);
         } catch (UnirestException | TagException |
                 CannotWriteException | ReadOnlyFileException |
                 CannotReadException | IOException |

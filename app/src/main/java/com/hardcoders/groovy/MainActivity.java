@@ -1,6 +1,7 @@
 package com.hardcoders.groovy;
 
 import android.Manifest;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -8,120 +9,105 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import org.cmc.music.metadata.MusicMetadata;
-import org.cmc.music.metadata.MusicMetadataSet;
-import org.cmc.music.myid3.MyID3;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+
 
 public class MainActivity extends AppCompatActivity {
-
-    private static final int MUSIC_ID = 14;
-    EditText searchEdit;
-    Button button;
-    String selectedSong = "";
-    private static final int permissionResult = 281;
+    ListView listView;
+    private static final int permissionResult = 22;
+    public static final String selected_song_name = "SELECTED_SONG_NAME";
+    public static final String selected_song_location = "SELECTED_SONG_LOCATION";
+    Track selectedTrack;
+    TextView textView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Set the custom Actionbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(toolbar);
-
-        // Initialize the view on the activity
-        searchEdit = (EditText) findViewById(R.id.main_edit);
-        button = (Button) findViewById(R.id.main_button);
-        buttonDisableIfEmpty(button, searchEdit, 100);
-
-        Button button1 = (Button) findViewById(R.id.main_song_button);
-        button1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                requestPermission();
-            }
-        });
+        setContentView(R.layout.activity_music);
+        listView = (ListView) findViewById(R.id.local_listview);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.my_progressbar);
+        progressBar.setVisibility(View.GONE);
+        textView = (TextView) findViewById(R.id.no_results_text_view);
+        requestPermission();
     }
 
-    private void buttonDisableIfEmpty(final Button button, EditText searchEdit, int size) {
-        button.setEnabled(false);
-        searchEdit.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
+    private ArrayList<Track> getAllSongs() {
+        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
 
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.toString().trim().length() > 0) {
-                    button.setEnabled(true);
-                } else {
-                    button.setEnabled(false);
-                }
-            }
+        String[] projection = {
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.ALBUM_ID
+        };
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
-        searchEdit.setFilters(new InputFilter[]{new InputFilter.LengthFilter(size)});
-    }
+        Cursor cursor = this.managedQuery(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                null,
+                null);
 
-    //show list of songs which has the name which you searched for
-    public void startNewActivity(View view) {
-        Intent intent = new Intent(this, LocalMusicActivity.class);
-        intent.putExtra("SEARCHED_KEY", searchEdit.getText().toString());
-        intent.putExtra("SELECTED_SONG", selectedSong);
-        startActivity(intent);
-    }
-
-    // Select a local song which can be used to search
-    public void startPopup() {
-        Intent intent = new Intent();
-        intent.setAction(android.content.Intent.ACTION_PICK);
-        intent.setData(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, MUSIC_ID);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MUSIC_ID && resultCode == RESULT_OK) {
-            if ((data != null) && (data.getData() != null)) {
-                Uri audioFileUri = data.getData();
-                File audioFile = new File(getPath(audioFileUri));
-                selectedSong = audioFile.getAbsolutePath();
-                try {
-                    MusicMetadataSet src_set = new MyID3().read(audioFile);
-                    MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
-                    String song_title = metadata.getSongTitle();
-                    searchEdit.setText(song_title);
-                } catch (Exception e) {
-                    Toast.makeText(this, "An error occured", Toast.LENGTH_SHORT).show();
-                }
-            }
+        ArrayList<Track> songs = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            Uri sArtworkUri = Uri
+                    .parse("content://media/external/audio/albumart");
+            Uri albumArtUri = ContentUris.withAppendedId(sArtworkUri, cursor.getLong(4));
+            Track track = new Track(cursor.getString(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    albumArtUri);
+            songs.add(track);
         }
+        Collections.sort(songs, new Comparator<Track>() {
+            @Override
+            public int compare(Track o1, Track o2) {
+                return o1.Name.compareTo(o2.Name);
+            }
+        });
+        return songs;
     }
 
-    public String getPath(Uri uri) {
-        String[] projection = {MediaStore.Audio.Media.DATA};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        startManagingCursor(cursor);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
+    private void populateListview() {
+        final ArrayList<Track> tracks = getAllSongs();
+        if (tracks.size() == 0)
+            textView.setText("No songs found");
+        else {
+            CustomAdapter adapter = new CustomAdapter(this, tracks);
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    selectedTrack = tracks.get(position);
+                    Intent intent = new Intent(getApplicationContext(), SongSearchActivity.class);
+                    Log.d("MAinACtivity", selectedTrack.Location);
+                    intent.putExtra(selected_song_location, selectedTrack.Location);
+                    intent.putExtra(selected_song_name, selectedTrack.Name);
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     void requestPermission() {
@@ -135,10 +121,11 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, permissionResult);
         } else {
-            startPopup();
+            populateListview();
         }
     }
 
+    // If permissions are granted then show
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
@@ -146,13 +133,12 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startPopup();
+                    populateListview();
                 } else {
-                    Toast.makeText(this, "Allow Permission", Toast.LENGTH_SHORT).show();
+                    textView.setText("Allow permission to show songs to select");
                 }
             }
         }
 
     }
-
 }

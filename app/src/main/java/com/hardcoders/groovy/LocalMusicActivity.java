@@ -1,6 +1,8 @@
 package com.hardcoders.groovy;
 
 import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -40,15 +42,14 @@ public class LocalMusicActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_local_music);
+        setContentView(R.layout.activity_music);
 
-        String s = getIntent().getStringExtra("SEARCHED_KEY");
-        String filePath = getIntent().getStringExtra("SELECTED_SONG");
+        String s = getIntent().getStringExtra(MainActivity.selected_song_name);
+        String filePath = getIntent().getStringExtra(MainActivity.selected_song_location);
         if (filePath != null)
             this.filePath = filePath;
         else {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            finish();
         }
         listView = (ListView) findViewById(R.id.local_listview);
         progressBar = (ProgressBar) findViewById(R.id.my_progressbar);
@@ -63,12 +64,12 @@ public class LocalMusicActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedTrack = tracks.get(position);
-                requestPermission();
+                checkPermission();
             }
         });
     }
 
-    void requestPermission() {
+    void checkPermission() {
 
         int writePermissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -76,14 +77,9 @@ public class LocalMusicActivity extends AppCompatActivity {
                 Manifest.permission.READ_EXTERNAL_STORAGE);
         if (writePermissionCheck == PackageManager.PERMISSION_DENIED ||
                 readPermissionCheck == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, permissionResult);
-        } else {
-            if (Objects.equals(filePath, ""))
-                startPopup();
-            else
-                changeSong(new File(filePath));
-        }
+            finish();
+        } else
+            changeSong(new File(filePath));
     }
 
     @Override
@@ -92,40 +88,16 @@ public class LocalMusicActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    public void startPopup() {
-        Intent intent = new Intent();
-        intent.setAction(android.content.Intent.ACTION_PICK);
-        intent.setData(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, MUSIC_ID);
-    }
-
-
-    public String getPath(Uri uri) {
-        String[] projection = {MediaStore.Audio.Media.DATA};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        startManagingCursor(cursor);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MUSIC_ID && resultCode == RESULT_OK) {
-            if ((data != null) && (data.getData() != null)) {
-                Uri audioFileUri = data.getData();
-                File audioFile = new File(getPath(audioFileUri));
-                changeSong(audioFile);
-            }
-        }
-    }
-
     void changeSong(File audioFile) {
-        final Snackbar snackbar = Snackbar
-                .make(listView, "Downloading albumart for song", Snackbar.LENGTH_LONG);
-        View view = snackbar.getView();
-        view.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        snackbar.show();
+        Log.d("changeFile", audioFile.getAbsolutePath());
+        ProgressDialog progressDialog = ProgressDialog.show(this,null,"Downloading albumart for song");
+        progressDialog.setProgressStyle(R.style.DarkTheme);
+        progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                finish();
+            }
+        });
         try {
             MusicMetadataSet src_set = new MyID3().read(audioFile);
             MusicMetadata metadata = (MusicMetadata) src_set.getSimplified();
@@ -136,30 +108,10 @@ public class LocalMusicActivity extends AppCompatActivity {
             Log.d("Music Selected", artist + "\t" + album + "\t" + song_title + "\t");
             // Here we download the songs albumart and set all the tags
             ImageDownloader imageDownloader = new ImageDownloader(this, selectedTrack,
-                    audioFile, listView);
+                    audioFile, progressDialog);
             imageDownloader.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    // If permissions are granted then show
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case permissionResult: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (Objects.equals(filePath, ""))
-                        startPopup();
-                    else
-                        changeSong(new File(filePath));
-                } else {
-                    Toast.makeText(this, "Allow Permission", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-
     }
 }

@@ -1,5 +1,6 @@
 package com.hardcoders.groovy;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -27,16 +29,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 class ImageDownloader extends AsyncTask<String, Void, byte[]> {
-    private ListView listView;
     private Track track;
     private File audioFile;
     private Context context;
-
-    ImageDownloader(Context context, Track track, File audioFile, ListView listView) {
+    private ProgressDialog progressDialog;
+    ImageDownloader(Context context, Track track, File audioFile, ProgressDialog progressDialog) {
         this.track = track;
         this.context = context;
         this.audioFile = audioFile;
-        this.listView = listView;
+        this.progressDialog = progressDialog;
     }
 
     @Override
@@ -67,13 +68,6 @@ class ImageDownloader extends AsyncTask<String, Void, byte[]> {
     @Override
     protected void onPostExecute(byte[] bytes) {
         try {
-
-            // Sending message that the song has been downloaded
-            Snackbar snackbar = Snackbar.make(listView, "Download done", Snackbar.LENGTH_LONG);
-            View view = snackbar.getView();
-            view.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
-            snackbar.show();
-
             // Changing filename to "<artists> - <song-name>.mp3"
             String[] fileArray = audioFile.getName().split("\\.");
             String newFileName = GetFileName(TextUtils.join(", ", track.Artists), track.Name) + "."
@@ -100,6 +94,9 @@ class ImageDownloader extends AsyncTask<String, Void, byte[]> {
             // Removing the old file and adding the new file
             DeleteFromMediaStore(context, audioFile);
             AddToMediaStore(context, newAudioFile);
+            // Sending message that the song has been downloaded
+            Toast.makeText(context, "Download Done", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
         } catch (ID3WriteException | IOException e) {
             e.printStackTrace();
         }
