@@ -25,17 +25,4 @@
         android:layout_height="wrap_content"
         android:onClick="startNewActivity"
         android:text="@string/search" />
-
-    <Button
-        android:id="@+id/main_song_button"
-        android:theme="@style/Theme.Design.Light"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/select_song"/>
-    <TextView
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Made by Nithin, Yeteesh and Shiraz"
-        android:textSize="22sp"/>
 </LinearLayout>

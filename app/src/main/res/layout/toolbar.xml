@@ -7,4 +7,5 @@
     android:layout_height="?attr/actionBarSize"
     android:elevation="4dp"
     android:background="@color/colorPrimary"
-    tools:targetApi="lollipop" />
+    tools:targetApi="lollipop" >
+</android.support.v7.widget.Toolbar>
